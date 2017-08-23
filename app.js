@@ -54,7 +54,7 @@ var bucketRecord = "0809-0816.json";//"bucket_record_717_721.json";
 var eventRecord = "http://140.116.247.113:12130/api/mcc?start=2017-07-17&end=2017-07-26";
 //var bucketRecord = "http://report.denguefever.tw/bucket-record/?start=2017-07-17&end=2017-07-21&county=台南";
 
-queue()
+d3.queue()
   .defer(d3.json, bucketList)
   .defer(d3.json, bucketRecord)
   .await(makeMyMap);
