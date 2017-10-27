@@ -28,12 +28,12 @@ function getArgs() {
 }
 
 var args = getArgs();
-
+var winSize = 17;
 if (args.lng & args.lat){
-  var map = L.map('map').setView([args.lat, args.lng], 15);
+  var map = L.map('map').setView([args.lat, args.lng], winSize);
 }
 else{
-  var map = L.map('map').setView([22.9990919,120.210303], 15);
+  var map = L.map('map').setView([22.9990919,120.220303], winSize);
 }
 mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
 
