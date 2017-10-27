@@ -65,53 +65,83 @@ d3.queue()
 function makeMyMap(error, list, record) {
   var radius = 25;
 
-  var color = ["65FF29", "E8DF2E", "FFC440", "E8732E", "FF3333"];
-  var count = [0, 20, 40, 60, 80];
-
+  var color = ["808080", "00e600", "FFFF00", "FFCC00", "FF9900", "FF6600"];
+  var count = [0, 1, 6, 20, 50, 100];
 
   var todayData = record[today];
   var todayArr = [];
+
 
   Object.keys(todayData).forEach(function(e) {
     var that = this;
     todayArr.push(todayData[e]);
   }, {})
 
+
   var feature = g.selectAll("circle")
-    .data(todayArr)
+    .data(list)
     .enter()
     .append("circle")
-    .style("opacity", .6)
+    .attr('id', function(d) {
+      return d.lamp_id;
+    })
+    .style("opacity", .5)
     .style("fill", function(d) {
-      if(parseInt(d.sum) >= count[0] && parseInt(d.sum) < count[1]) {
-          d.color = color[0];//"65FF29";
+      var loc = todayArr.find(function(l){return l.lamp_id == d.lamp_id;});
+      if( loc == undefined ){
+      	var sum = 0;
+      }else{
+      	var sum = parseInt(loc.sum);
       }
-      else if(parseInt(d.sum) >= count[1] && parseInt(d.sum) < count[2]) {
-          d.color = color[1];//"E8DF2E";
+      console.log(sum);
+      if(sum >= count[0] && sum < count[1]) {
+          d.color = color[0];
       }
-      else if(parseInt(d.sum) >= count[2] && parseInt(d.sum) < count[3]) {
-          d.color = color[2];//"FFC440";
+      else if(sum >= count[1] && sum < count[2]) {
+          d.color = color[1];
       }
-      else if(parseInt(d.sum) >= count[3] && parseInt(d.sum) < count[4]) {
-          d.color = color[3];//"E8732E";
+      else if(sum >= count[2] && sum < count[3]) {
+          d.color = color[2];
       }
-      else if(parseInt(d.sum) >= count[4]) {
-          d.color = color[4];//"FF3333";
+      else if(sum >= count[3] && sum < count[4]) {
+          d.color = color[3];
+      }
+      else if(sum >= count[4] && sum < count[5]) {
+          d.color = color[4];
+      }
+      else if(sum >= count[5]) {
+          d.color = color[5];
       }
       else{
-          d.color = color[0];//"65FF29";
+          d.color = color[0];
       }
       return d.color;
     })
-
     .attr("r", function(d) {
-      var radius = (20+ parseInt(d.size)*5);
-      return radius;
+      var loc = todayArr.find(function(l){return l.lamp_id == d.lamp_id;});
+      if( loc == undefined ){
+      	var radius = 20;
+      }else if( loc.size == undefined){
+        var radius = 20;
+      }else{
+        var radius = (20+ parseInt(loc.size)*5);
+  	  }
+  	  return radius;
     })
     .attr('id', function(d) {
       return d.lamp_id;
     })
-    .each(pulse);
+    .attr("transform",
+      function(d) {
+        d.LatLng = new L.LatLng(d.lamp_location[1],d.lamp_location[0]);
+        
+        return "translate(" +
+          map.latLngToLayerPoint(d.LatLng).x + "," +
+          map.latLngToLayerPoint(d.LatLng).y + ")";
+
+      }
+    );
+    //.each(pulse);
 
   map.on("viewreset", update);
   update();
@@ -119,9 +149,7 @@ function makeMyMap(error, list, record) {
   function update() {
     feature.attr("transform",
       function(d) {
-        var loc = list.find(function(l){ return l.lamp_id == d.lamp_id;});
-        d.LatLng = new L.LatLng(loc['lamp_location'][1],loc['lamp_location'][0]);
-        
+        d.LatLng = new L.LatLng(d.lamp_location[1],d.lamp_location[0]);        
         return "translate(" +
           map.latLngToLayerPoint(d.LatLng).x + "," +
           map.latLngToLayerPoint(d.LatLng).y + ")";
@@ -129,21 +157,24 @@ function makeMyMap(error, list, record) {
       }
     )
   }
+  //   circle = circle.transition()
+  //     .duration(1000)
+  //     //.attr("stroke-width", 20)
+  //     .attr("r", function(d) {
+   //      var loc = todayArr.find(function(l){return l.lamp_id == d.lamp_id;});
+   //      if( loc == undefined ){
+   //       var radius = 20;
+   //      }else if( loc.size == undefined){
+   //        var radius = 20;
+   //      }else{
+   //        var radius = (20+ parseInt(loc.size)*5);
+   //     }
+   //     return radius;
+   //    })
+  //     .ease('sine');
+  // }
 
-  function pulse() {
-    var circle = d3.select(this);
-    circle = circle.transition()
-      .duration(1000)
-      //.attr("stroke-width", 20)
-      .attr("r", function(d) {
-        var radius = (20+ parseInt(d.size)*5);
-        return radius;
-
-      })
-      .ease('sine');
-  }
-
-  repeat();
+  /*repeat();
 
   function repeat() {
     setInterval(function() {
@@ -152,13 +183,21 @@ function makeMyMap(error, list, record) {
       var count = [0, 20, 40, 60, 80];
       circle = circle.transition()
         .duration(1000)
-
         .attr("r", function(d) {
-          var radius = (20+ parseInt(d.size)*5);
+          var loc = todayArr.find(function(l){return l.lamp_id == d.lamp_id;});
+          if( loc == undefined ){
+            var radius = 20;
+          }else if( loc.size == undefined){
+            var radius = 20;
+          }else{
+            var radius = (20+ parseInt(loc.size)*5);
+          }
           return radius;
-
         })
         .ease('sine');
     }, 3000);
-  }
+  }*/
+  // function pulse() {
+  //   var circle = d3.select(this);
+
 }
