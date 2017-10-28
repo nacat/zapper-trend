@@ -71,12 +71,13 @@ function makeMyMap(error, list, record) {
   var todayData = record[today];
   var todayArr = [];
 
+  if(todayData != null){
+    Object.keys(todayData).forEach(function(e) {
+      var that = this;
+      todayArr.push(todayData[e]);
+    }, {})
 
-  Object.keys(todayData).forEach(function(e) {
-    var that = this;
-    todayArr.push(todayData[e]);
-  }, {})
-
+  }
 
   var feature = g.selectAll("circle")
     .data(list)
@@ -93,7 +94,6 @@ function makeMyMap(error, list, record) {
       }else{
       	var sum = parseInt(loc.sum);
       }
-      console.log(sum);
       if(sum >= count[0] && sum < count[1]) {
           d.color = color[0];
       }
